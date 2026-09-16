@@ -1,5 +1,7 @@
 # agent-ready
 
+[![CI](https://github.com/im-pareshm/agent-ready/actions/workflows/ci.yml/badge.svg)](https://github.com/im-pareshm/agent-ready/actions/workflows/ci.yml)
+
 **Verified, self-maintaining docs for AI-assisted development.** A skill that makes a
 repository ready for any coding agent — Claude Code, Codex, Cursor, Copilot, Gemini
 CLI, or a human starting cold — by producing documentation the agent can trust, and
@@ -142,6 +144,10 @@ scripts/
   doc-drift.sh              identifiers in a diff → every doc line mentioning them
 examples/atlas/             a real result, with before/after
 AGENTS.md                   this repo's own, produced by the skill
+CLAUDE.md                   pointer to AGENTS.md (what the skill writes for Claude Code)
+KNOWN_ISSUES.md             this repo's own parked-fix ledger
+CHANGELOG.md                versions; the procedure is what's versioned
+.github/workflows/ci.yml    parse + shellcheck + self-scan
 ```
 
 ## Contributing

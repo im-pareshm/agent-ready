@@ -1,0 +1,35 @@
+name: CI
+
+# One path, because there is nothing slow here: parse and lint the scripts, then
+# run them against this repository. The secrets scan must exit 0 on our own
+# history; the drift script must run without error on the last commit.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  scripts:
+    name: Parse, lint, self-scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # scan-secrets reads the whole history
+
+      - name: POSIX parse
+        run: for f in scripts/*.sh; do sh -n "$f" && echo "ok $f"; done
+
+      - name: shellcheck
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q shellcheck
+          shellcheck --version | grep version
+          shellcheck -s sh scripts/*.sh
+
+      - name: Secrets scan on this repository
+        run: sh scripts/scan-secrets.sh .
+
+      - name: Drift script smoke test
+        run: sh scripts/doc-drift.sh HEAD~1
