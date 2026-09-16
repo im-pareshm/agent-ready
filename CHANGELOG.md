@@ -6,6 +6,10 @@ minor bump, a change to a reference doc or script pattern is a patch.
 
 ## Unreleased
 
+(nothing yet)
+
+## v0.1.0 — 2026-09-16
+
 - Initial procedure: bootstrap, audit and pre-publish modes; seven principles;
   tiered outputs (always / derived / offered).
 - Reference docs: discovery, AGENTS.md structure, docs ownership, known issues,
