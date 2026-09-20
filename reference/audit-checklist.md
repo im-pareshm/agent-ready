@@ -84,14 +84,20 @@ entries" — designed, documented, never implemented. These are **product
 questions**, not doc fixes: ask whether the feature is still wanted before
 deleting it from the doc.
 
-## 9. Branch names, CI triggers, URLs
+## 9. Branch names, CI triggers, git conventions, URLs
 
 *How:* `git symbolic-ref refs/remotes/origin/HEAD`; grep workflows and docs for
-`main`/`master`; check the CI badge URL; check external links resolve.
+`main`/`master`; check the CI badge URL; check external links resolve. For every
+claim about how change enters the repo (CONTRIBUTING.md, an AGENTS.md "Git"
+section, a PR template): `git log --format=%s -50` for the message convention,
+`git log --merges` for the branch model, the hooks directory for what actually
+runs, the host's settings for protection.
 
 *Typical drift:* workflow triggers on `main` in a repo whose default branch is
 `master` (the e2e job never runs); docs that say "every push" when the trigger is
-PR-only.
+PR-only; "we use Conventional Commits" over a log that doesn't; "all changes via
+PR" in a repo with direct pushes to the default branch; a documented pre-commit
+hook that no clone has installed.
 
 ## 10. Versions and environments
 

@@ -32,6 +32,7 @@ isn't here.
 | Feature scope: what's in, what's deferred | — (a product decision) |
 | A fix you're parking | an exclusion, a `.skip`, a workaround |
 | Default branch, CI triggers | workflow files |
+| How change enters the repo: branch model, commit convention, hooks, releases | hook config, a PR template, CONTRIBUTING.md, tags, a version file |
 
 ## Step 2 — map each kind to the docs that exist
 

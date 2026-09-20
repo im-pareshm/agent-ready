@@ -115,7 +115,51 @@ What runs where: which jobs on PRs, which on the default branch, why the split.
 Name the default branch. If a job is expected to be red, say why and link the
 KNOWN_ISSUES entry.
 
-## 11. Credentials
+## 11. Git
+
+How change enters the repo, **as observed** — not the workflow you would choose.
+Each line is a fact from the log, the hooks, the host's settings, or the human's
+answer. An agent reads this section right before its first commit; make it enough
+to produce a commit that looks like the others.
+
+- **Branch model.** Commits land on the default branch directly, or via branches
+  and PRs (merged how: merge commit, squash, rebase). The branch naming in use.
+  Whether the default branch is protected and what it requires —
+  `Unknown — check <host> settings` if you couldn't see it.
+- **Commit messages.** The convention the log actually follows, with a real
+  subject quoted. Say "Conventional Commits" only if the log uses it or a hook
+  enforces it; otherwise describe what is there ("`Scope: what changed`, imperative,
+  no body unless the why isn't obvious").
+- **Checks before commit or push.** What the hooks run (`.husky/`, pre-commit,
+  lefthook, `core.hooksPath`) and the manual equivalent for an agent whose tooling
+  skips hooks. Whether commits are signed.
+- **What needs asking first.** The git actions this repo cares about an agent not
+  taking alone: force-push, rewriting published history, pushing to the default
+  branch, amending someone else's commit. List only the ones that apply here,
+  with the reason (e.g. "users update with `git pull`"); don't list all four by
+  reflex. Pre-fill the Step 2 question with "never rewrite history — amend,
+  rebase, reset, force-push — unless explicitly asked"; the human confirms or
+  narrows it, and it goes in attributed and dated.
+- **Releases.** Tags, a version file, a changelog — and which commit bumps them.
+
+```
+Linear history on `main`, no merge commits. Never touch history unless explicitly
+asked (decision, 2026-09-20); on `main` users also update with `git pull`.
+Subjects are `Scope: what changed` ("Scripts: scan-secrets.sh and doc-drift.sh
+(POSIX sh)"); no hook enforces anything. Before every push:
+`sh scripts/scan-secrets.sh` exits 0. Releases are tags (`v0.1.0`) on a commit
+that updates CHANGELOG.md.
+```
+
+If the human wants a convention the log doesn't yet show, write it as the rule,
+attributed, and say that history before that date predates it — so the log and the
+rule don't look like a contradiction to the next reader.
+
+Not here: git tutorials; a branching model the repo doesn't use; message rules no
+hook enforces and no human asked for; the pre-publish checklist (that's the
+skill's, run once).
+
+## 12. Credentials
 
 Where each kind lives and the rule that none lives in the repo:
 
@@ -126,7 +170,7 @@ mirrored in ci.yml. Production: set at deploy time, must differ from both. The
 repo is public.
 ```
 
-## 12. Known issues pointer
+## 13. Known issues pointer
 
 One line: "Before starting work, skim KNOWN_ISSUES.md; if your task touches a
 listed item, fix it or update the entry in the same commit." The rules live in

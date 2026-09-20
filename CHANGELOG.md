@@ -6,7 +6,16 @@ minor bump, a change to a reference doc or script pattern is a patch.
 
 ## Unreleased
 
-(nothing yet)
+- Git conventions are part of the procedure (minor). Discovery records how change
+  enters the repo — branch model, the commit-message convention actually in the
+  log, hooks and local checks, signing, host rules, releases
+  (`reference/discovery.md` §5). Step 2 asks which of that is deliberate and what
+  an agent must never do without asking. AGENTS.md gets a "Git" section
+  (`reference/agents-md-structure.md` §11); the audit checks documented
+  conventions against the log (`reference/audit-checklist.md` §9); the ownership
+  table gets a row. Agent commits made by the skill follow the recorded
+  convention. This repo's own AGENTS.md gets its Git section: history is never
+  rewritten unless explicitly asked; subjects are `Scope: what changed`.
 
 ## v0.1.0 — 2026-09-16
 

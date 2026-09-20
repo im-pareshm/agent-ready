@@ -87,6 +87,7 @@ commit. Which doc:
 | Which tools get pointer files | `reference/agents-md-structure.md` (the pointer table); `README.md` |
 | The example | re-copy from the source repo, update the date in `examples/atlas/README.md` |
 | CI | `.github/workflows/ci.yml`'s header comment; "CI" here |
+| How commits, tags or releases are made | "Git" here; `CHANGELOG.md`'s header if what a version means changes |
 
 Self-check before finishing: `sh scripts/doc-drift.sh` on your own diff.
 
@@ -120,6 +121,28 @@ next step and is listed in KNOWN_ISSUES.md.
 with `sh -n`, `shellcheck` them, run `scan-secrets.sh` against this repo (must exit
 0), and smoke-run `doc-drift.sh HEAD~1`. One job; nothing here is slow enough to
 split.
+
+## Git
+
+- Linear history on `main`, no merge commits (six commits, one author, as of
+  2026-09-20). Branch protection: Unknown — check the repository settings on
+  GitHub; `gh` is not installed locally.
+- **Never touch history unless explicitly asked** (decision, 2026-09-20): no
+  amend, rebase, reset or force-push on any branch without an instruction that
+  names it. New commits only. On `main` there is a mechanical reason too: users
+  install by cloning it and update with `git pull`.
+- **Subjects are `Scope: what changed`** (decision, 2026-09-20; every commit so
+  far already follows it): the scope is the area touched — Scripts, Reference
+  docs, Example, CI, Release — then what changed, in plain words. "Scripts:
+  scan-secrets.sh and doc-drift.sh (POSIX sh)". Not Conventional Commits: nothing
+  here consumes a `type:` prefix (CHANGELOG.md is written by hand), so the
+  ceremony would buy nothing. No hooks, no `core.hooksPath`, no signing config —
+  match it by hand.
+- Before every push: `sh scripts/scan-secrets.sh` exits 0, and `sh -n` +
+  shellcheck if a script changed (see Commands). CI repeats both.
+- Releases are tags (`v0.1.0`) on a commit that moves CHANGELOG.md's "Unreleased"
+  entries under the version. A change to a principle or step goes through an
+  issue first (README, Contributing).
 
 ## Credentials
 

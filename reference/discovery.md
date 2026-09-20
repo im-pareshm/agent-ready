@@ -82,7 +82,35 @@ Before running anything:
 - Runtime versions pinned in CI versus locally.
 - Whether CI is currently green (host API, or the badge), and if red, why.
 
-## 5. Docs
+## 5. Git — how change enters the repo
+
+Read the history before you write a commit of your own; yours should look like
+the repo's. Record each item as *observed*; the human says which are deliberate in
+Step 2.
+
+- **Branch model.** `git log --oneline --graph -40` and `git log --merges --oneline
+  | head`: linear commits on the default branch, merge commits, or squash-merged
+  PRs (a linear history whose subjects end in `(#123)`). `git branch -r` for the
+  naming live branches use.
+- **Commit-message convention.** `git log --format=%s -50`. A `type(scope):`
+  prefix (Conventional Commits), a `Scope: subject` prefix, plain sentences, issue
+  references, sign-off trailers. Note how *consistent* it is: a convention most
+  commits follow is the convention; one a hook or CI check enforces is a rule.
+- **Hooks and local checks.** `.husky/`, `.pre-commit-config.yaml`, `lefthook.yml`,
+  `git config core.hooksPath`, non-`.sample` files in `.git/hooks/`. What each
+  runs, and the command that runs the same check by hand.
+- **Signing.** `git config commit.gpgsign`; `git log --format=%G? -20` — mostly
+  `G`/`U` means the repo expects signed commits, and an unsigned one may be
+  rejected.
+- **Host rules.** Branch protection and required checks, a PR template
+  (`.github/pull_request_template.md`), `CODEOWNERS`, `CONTRIBUTING.md`. Read them
+  via the host CLI/API where you can; otherwise `Unknown — check <host> settings`.
+- **Releases.** `git tag -l`, a version file, a changelog and what maintains it.
+- **Author identities** the history carries (`git log --format='%an <%ae>' |
+  sort -u`). Feeds pre-publish (emails become public) and tells you what your
+  own commits will be attributed to.
+
+## 6. Docs
 
 Inventory every `*.md`, `docs/`, ADR folder, wiki or external link (Notion, Google
 Doc). For each one:
@@ -99,7 +127,7 @@ Also record which files are boilerplate (the framework's default README, an
 untouched CONTRIBUTING template) — those are candidates to replace; real docs are
 never rewritten wholesale.
 
-## 6. Environment and secrets
+## 7. Environment and secrets
 
 - Env example files (`.env.example`, `.env.sample`, `.env.template`) and whether
   every value is a placeholder.
@@ -115,7 +143,7 @@ never rewritten wholesale.
   (`git log --all --name-only --format="" | sort -u`)?
 - Run `scripts/scan-secrets.sh` and keep its output for the report.
 
-## 7. Interfaces and data model
+## 8. Interfaces and data model
 
 These decide whether tier-2 docs have substance.
 
@@ -129,13 +157,14 @@ These decide whether tier-2 docs have substance.
   deletes, tenancy columns, cascade rules, and any column nothing writes to
   (grep the codebase for each column name; a column with no writer is a finding).
 
-## 8. What you now know — and don't
+## 9. What you now know — and don't
 
 Before moving to the human questions, write two short lists:
 
 - **Observed patterns that look deliberate** — "every amount is an integer",
   "no ORM, raw SQL only", "single tenant but tenant id on every row", "feature
-  flags via env only". These become the "is this a decision, and why?" question.
+  flags via env only", "every commit goes straight to main". These become the
+  "is this a decision, and why?" question.
 - **Things you could not determine** — the runtime version, whether a doc is
   current, what a column is for. These go in AGENTS.md as `Unknown — <how to find
   out>` unless the human answers them.

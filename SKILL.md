@@ -67,6 +67,10 @@ Collect, with evidence, before writing a word:
   until you know what it resets.
 - **CI.** Existing workflows: triggers, jobs, the default branch name, whether the
   triggers match it.
+- **Git.** How change enters the repo, from the log and the hooks — not from a
+  policy doc: branch model, the commit-message convention actually used, hooks and
+  local checks, signing, host rules (protection, PR template, CODEOWNERS), tags.
+  Your own commits in this repo must match what you find.
 - **Docs.** Every `*.md`, `docs/`, ADR folder, wiki link. For each: what it covers,
   and one spot-check of a claim against the code so you know how much to trust it.
 - **Environment and secrets.** Env example files, what env vars the code reads,
@@ -89,12 +93,16 @@ pre-filled where you have one so they can just confirm:
 3. **Decisions to preserve.** For each pattern you observed that looks deliberate
    (list them: "every amount is an integer", "no ORM", "single-user but `userId`
    on every table"), ask: is this a decision, and why?
-4. **Authoritative docs.** Where two existing docs disagree, which wins? Any doc
+4. **Git.** State what you observed (branch model, message style, hooks) and ask:
+   is that deliberate? Is there a convention the log doesn't show yet that agents
+   should follow? Which actions must an agent never take here without asking —
+   force-push, rewriting history, pushing to the default branch?
+5. **Authoritative docs.** Where two existing docs disagree, which wins? Any doc
    that is historical and should be marked superseded?
-5. **Tools.** Which AI tools do they and collaborators use? (Decides which pointer
+6. **Tools.** Which AI tools do they and collaborators use? (Decides which pointer
    files to write — see Step 3.)
-6. **Visibility.** Is or will the repo be public? (Triggers pre-publish.)
-7. **Where new docs go.** Root, or the repo's existing `docs/` folder?
+7. **Visibility.** Is or will the repo be public? (Triggers pre-publish.)
+8. **Where new docs go.** Root, or the repo's existing `docs/` folder?
 
 Do not block on this: draft everything you can from discovery first, then ask, then
 fill the intent-dependent parts.
@@ -108,7 +116,7 @@ for the ledger, `reference/ci-principles.md` for CI. Create files in tiers:
 
 | File | Content |
 |---|---|
-| `AGENTS.md` | What this is (intent, from the human) · Status · Commands (verified) · Key implementation facts · Source-of-truth docs · **Docs are part of the change** with the ownership table · Decisions to preserve (with the human's *why*) · Data-model summary if any · Testing (real coverage, how to run safely) · CI · Credentials rule · Known issues pointer |
+| `AGENTS.md` | What this is (intent, from the human) · Status · Commands (verified) · Key implementation facts · Source-of-truth docs · **Docs are part of the change** with the ownership table · Decisions to preserve (with the human's *why*) · Data-model summary if any · Testing (real coverage, how to run safely) · CI · Git (branch model, message convention, checks, what needs asking first) · Credentials rule · Known issues pointer |
 | `CLAUDE.md` | Pointer to AGENTS.md; "if you edit guidance, edit AGENTS.md so they never drift" |
 | `KNOWN_ISSUES.md` | Rules and entry format; entries only for things verification actually found |
 
@@ -169,7 +177,9 @@ In chat, not committed. Three lists:
 
 Commit hygiene: code fixes you made along the way (a broken command, a wrong
 env-example path) go in their own commits, separate from the docs, so the history
-shows what changed in the product versus the description of it.
+shows what changed in the product versus the description of it. Every commit
+follows the convention you recorded in discovery — the AGENTS.md you just wrote
+says so, and your commits are the first ones it gets judged against.
 
 ## Mode: audit
 
@@ -184,8 +194,8 @@ every claim true".
    types that drift most, in order: UI labels and button names · form fields and
    their validation · navigation structure · formulas and derived numbers · schema
    fields, enums and constraints · features described as built that aren't · commands
-   and setup steps · branch names and CI triggers. For each claim: true, false (and
-   what the code does), or unverifiable.
+   and setup steps · branch names, CI triggers and git conventions. For each claim:
+   true, false (and what the code does), or unverifiable.
 4. **Run** `scripts/scan-secrets.sh` and the test-safety check from
    `reference/testing-safety.md`.
 5. **Triage** every finding into exactly one of:

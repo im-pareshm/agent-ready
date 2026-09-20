@@ -57,9 +57,11 @@ knowledge until a section outgrows it.
 ### What it deliberately doesn't do
 
 Write requirements or design docs (it can't know them; it inventories and links
-whatever exists) · generate lint or formatter config · impose a folder layout on a
-repo that has one · promise agents will follow the rules. It documents what *is*,
-verifiably, and gives future changes a place to land.
+whatever exists) · generate lint or formatter config · impose a folder layout,
+branching model or commit format on a repo that has one (it records the one in
+use, and asks what an agent must never do alone) · promise agents will follow the
+rules. It documents what *is*, verifiably, and gives future changes a place to
+land.
 
 ## The principles
 
