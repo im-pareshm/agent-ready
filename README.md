@@ -33,7 +33,7 @@ Three modes:
 | Mode | When | What you get |
 |---|---|---|
 | **bootstrap** | No agent docs, or boilerplate | The full set of files below, every command in them run, a secrets scan, and a report of what still needs you |
-| **audit** | Docs exist; are they true? | A findings table — claim by claim, doc against code — with drift fixed in place, product questions asked, parked items filed |
+| **audit** | Docs exist; are they true, and is anything important missing? | A findings table — claim by claim, doc against code, then code against docs — with drift fixed in place, undocumented behaviour written up, product questions asked, parked items filed |
 | **pre-publish** | About to go public | History-wide secrets scan, test-credential hygiene, ignore coverage, branch/CI consistency, license, README |
 
 ### What gets generated
@@ -72,7 +72,8 @@ Each one was earned the hard way in the example repo.
 2. **Intent comes from the human.** Purpose, non-goals, deferrals, and the *why*
    behind decisions are asked for and attributed.
 3. **Docs are part of the change.** An ownership table in AGENTS.md maps kinds of
-   change to the docs they affect; the rule is fix-in-the-same-commit.
+   change to the docs they affect; the rule is same-commit, in both directions —
+   fix what your change made untrue, document what it added.
 4. **A parked fix gets an entry.** Exclusions, skips and workarounds go in
    `KNOWN_ISSUES.md` in the commit that parks them, linked both ways to the code.
    Fixing it deletes the entry.

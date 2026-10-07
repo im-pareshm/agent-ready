@@ -65,10 +65,27 @@ The rule, then the ownership table. See `docs-ownership.md` for building the
 table. The rule text that has worked:
 
 > If your change makes any statement in a doc untrue, fix that doc **in the same
-> commit**. Never leave a note saying a doc is outdated — fix the doc. Cheap
-> self-check before you finish: grep the `*.md` files for the names you touched
-> (function, route, script, env var, screen); if one appears, re-read that passage
-> and decide whether it still holds.
+> commit**. If it adds behaviour no doc states, document that **in the same
+> commit** too. Never leave a note saying a doc is outdated — fix the doc.
+>
+> Document new behaviour when someone using or changing the thing would need to
+> know it: a command, flag, env var, route, screen, script, config file, or a
+> change in what an existing one does. Internal refactors don't count. If no doc
+> owns it, the matching AGENTS.md section is the owner — add it there rather than
+> creating a stub doc.
+>
+> Two self-checks before you finish. **Drift:** grep the `*.md` files for the
+> names you touched (function, route, script, env var, screen); if one appears,
+> re-read that passage and decide whether it still holds. **Omission:** read the
+> ownership table the other way — for the kind of change you just made, does the
+> doc it names describe it now? The grep cannot catch this one: behaviour nothing
+> mentions matches nothing.
+
+The second half of that rule was added after the first half let a change through:
+a falsification test only fires on a statement that exists, so new behaviour that
+no doc mentioned satisfied the rule by saying nothing. An omission is drift with
+no text to grep for — it needs the table read backwards, which is why the
+ownership table has to be good enough to read in that direction.
 
 ## 7. Decisions to preserve
 

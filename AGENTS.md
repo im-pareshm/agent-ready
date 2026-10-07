@@ -77,7 +77,9 @@ Don't duplicate content across these; link.
 ## Docs are part of the change
 
 If your change makes any statement in a doc untrue, fix that doc in the same
-commit. Which doc:
+commit. If it adds behaviour no doc states — a new script, flag, exit code,
+principle, step or reference doc — document that in the same commit too. Which
+doc:
 
 | If you change… | Update |
 |---|---|
@@ -89,7 +91,13 @@ commit. Which doc:
 | CI | `.github/workflows/ci.yml`'s header comment; "CI" here |
 | How commits, tags or releases are made | "Git" here; `CHANGELOG.md`'s header if what a version means changes |
 
-Self-check before finishing: `sh scripts/doc-drift.sh` on your own diff.
+Self-check before finishing, both directions:
+
+- *Drift* — `sh scripts/doc-drift.sh` on your own diff, and re-read every doc it
+  names. Note it excludes `*.md`, so a docs-only change gives "no changes to
+  inspect"; that is the script working, not a clean bill of health.
+- *Omission* — read the table above backwards: for the kind of change you just
+  made, does the doc it names describe it now? No script catches this.
 
 ## Decisions to preserve
 

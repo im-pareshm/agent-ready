@@ -115,6 +115,27 @@ section says it shipped in v1. Read each doc once end to end for this alone.
 about that? Pointers to a doc that was replaced (a `CLAUDE.md` section moved to
 `AGENTS.md`) are common after a reorganisation.
 
+## 13. Behaviour no doc mentions
+
+Every check above runs docs → code, so none of them can fire on something the
+docs simply omit: there is no sentence to test. This is the one pass that runs
+the other way, code → docs.
+
+*How:* take the inventory from discovery — commands and scripts, env vars,
+routes and actions, screens, config files, the git and release conventions — and
+for each one ask which doc is supposed to describe it, using the ownership table.
+Anything significant that no doc names is a finding. "Significant" is the test
+from the rule: would someone using or changing this need to know? A flag that
+changes behaviour counts; a private helper doesn't.
+
+*Typical gaps:* a script added without a line in the commands section; an env var
+the code reads that the env example doesn't have; a second entry point nobody
+documented; a convention that lives only in the maintainer's head.
+
+Run this last — it needs the whole inventory — and expect it to be the pass that
+produces the most work, especially in a repo whose docs were written once at the
+start.
+
 ## Triage
 
 Every finding lands in exactly one bucket:
@@ -122,6 +143,7 @@ Every finding lands in exactly one bucket:
 | Bucket | Action | Commit |
 |---|---|---|
 | Drift — code is the truth | Fix the doc now | One commit per doc, or one for the audit |
+| Undocumented — the code does something no doc mentions | Write it into the owning doc, or the AGENTS.md section if nothing owns it | With the doc fixes |
 | Product question | Ask; don't decide | — until answered |
 | Bug — the doc is right, the code is wrong | Fix if small and unambiguous, else KNOWN_ISSUES entry | Own commit, clearly labelled `fix:` |
 | Parked | KNOWN_ISSUES entry naming the workaround | Same commit as the workaround |
@@ -130,7 +152,8 @@ Every finding lands in exactly one bucket:
 
 A table: **doc · line · claim · what the code does · bucket**. Group by doc. Lead
 with the counts (how many claims checked, how many false) so the human can gauge
-trust at a glance. Then the product questions as a numbered list — they need
+trust at a glance. Undocumented findings have no doc or line — list them
+separately, naming the code and the doc that should have covered it. Then the product questions as a numbered list — they need
 answers, and burying them in a table loses them.
 
 ## What an audit tends to find that isn't drift

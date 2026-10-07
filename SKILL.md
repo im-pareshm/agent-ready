@@ -23,9 +23,12 @@ damage in a real repo (see `examples/atlas/`).
    deliberately out of scope, and *why* a decision was made are not in the code.
    Ask, record the answer, attribute it. Never generate a requirements doc.
 3. **Docs are part of the change.** Every doc has an owner section in AGENTS.md
-   saying which kinds of change affect it, and the rule is: fix the doc in the same
-   commit. AGENTS.md is the fallback owner — if a doc doesn't exist, its content is a
-   section in AGENTS.md until it's big enough to split out.
+   saying which kinds of change affect it, and the rule is: in the same commit, fix
+   what your change made untrue *and* document what it added. Omission is drift —
+   behaviour no doc mentions matches no grep, so the ownership table has to be
+   readable backwards ("I changed this; which doc owes a description?"). AGENTS.md
+   is the fallback owner — if a doc doesn't exist, its content is a section in
+   AGENTS.md until it's big enough to split out.
 4. **A parked fix gets an entry.** Any exclusion, skip, workaround or deferred bug
    goes into KNOWN_ISSUES.md in the same commit that parks it, linked both ways to
    the code carrying it. Fixing it deletes the entry. No "resolved" graveyard.
@@ -43,7 +46,7 @@ damage in a real repo (see `examples/atlas/`).
 | Mode | Use when | Output |
 |---|---|---|
 | **bootstrap** | No AGENTS.md / CLAUDE.md, or one that is boilerplate | The full set of files (tiers below) + a report |
-| **audit** | The repo has docs; check them against the code | Findings table → same-commit fixes, questions for the human, KNOWN_ISSUES entries |
+| **audit** | The repo has docs; check them against the code, and the code against them | Findings table → same-commit fixes, newly documented behaviour, questions for the human, KNOWN_ISSUES entries |
 | **pre-publish** | The repo is about to become public, or gets a remote for the first time | Secrets/credential/license/README/branch findings → fixes |
 
 Modes chain: `bootstrap` ends with the `audit` verification pass; `pre-publish` is
@@ -157,7 +160,10 @@ secret or database files.
    documented as working.
 2. Run `scripts/scan-secrets.sh`. Anything it flags is resolved before the report.
 3. Run `scripts/doc-drift.sh` against everything you changed. Every doc it names is
-   re-read.
+   re-read. Then check the other direction by hand — for each kind of change in
+   your diff, the ownership table names a doc; does that doc describe the new
+   behaviour? The script cannot tell you this: it finds mentions, and an omission
+   has none.
 4. Re-read AGENTS.md as a stranger: can every sentence be traced to an evidence
    item or a human answer? Delete or mark `Unknown` anything that can't.
 5. If the repo has a test suite you now understand, run it against a throwaway
@@ -184,7 +190,7 @@ says so, and your commits are the first ones it gets judged against.
 ## Mode: audit
 
 For a repo that already has docs. The question is not "are the docs good" but "is
-every claim true".
+every claim true — and is anything that matters undocumented".
 
 1. **Inventory** the docs and the ownership map (or build one if AGENTS.md lacks it).
 2. **Check commands and coverage first** — they're cheap and they're the claims agents
@@ -196,16 +202,23 @@ every claim true".
    fields, enums and constraints · features described as built that aren't · commands
    and setup steps · branch names, CI triggers and git conventions. For each claim:
    true, false (and what the code does), or unverifiable.
-4. **Run** `scripts/scan-secrets.sh` and the test-safety check from
+4. **Walk the code against the docs** — the direction step 3 can't see. For each
+   row of the ownership table, take what the code has (commands, env vars, routes,
+   screens, scripts) and ask whether the doc that owns it says so. Significant
+   behaviour nothing documents is a finding.
+5. **Run** `scripts/scan-secrets.sh` and the test-safety check from
    `reference/testing-safety.md`.
-5. **Triage** every finding into exactly one of:
+6. **Triage** every finding into exactly one of:
    - *Drift, code is the truth* → fix the doc now, same commit per doc.
+   - *Undocumented* (the code does something no doc mentions) → write it into the
+     doc that owns it, or the AGENTS.md section if nothing does.
    - *Product question* (doc describes something unbuilt; is it wanted?) → ask,
      don't decide.
    - *Bug found by reading* (the doc is right and the code is wrong) → fix in its own
      commit if small and unambiguous; otherwise a KNOWN_ISSUES entry.
    - *Parked* → KNOWN_ISSUES entry with the workaround named.
-6. **Report** as a table: doc · line · claim · what the code does · triage.
+7. **Report** as a table: doc · line · claim · what the code does · triage. An
+   undocumented finding has no line — name the code instead.
 
 Reading the docs closely finds bugs. Expect it. A doc that describes what a button
 *should* do is a test case.

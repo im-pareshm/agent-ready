@@ -7,10 +7,21 @@ no way to follow it — an agent adding a screen can't know a user guide exists.
 ## The rule it serves
 
 > If your change makes any statement in a doc untrue, fix that doc in the same
-> commit. Never leave a note saying a doc is outdated — fix the doc.
+> commit. If it adds behaviour no doc states, document that in the same commit
+> too. Never leave a note saying a doc is outdated — fix the doc.
 
-The table makes the rule actionable; the grep self-check (`scripts/doc-drift.sh`, or
-by hand: grep `*.md` for every identifier you touched) makes it checkable.
+The table makes the rule actionable, and it has to work in **both directions**:
+
+- *Forwards*, from a doc: is what it says still true? The grep self-check
+  (`scripts/doc-drift.sh`, or by hand: grep `*.md` for every identifier you
+  touched) answers this one.
+- *Backwards*, from a change: I changed this kind of thing — which doc is
+  supposed to describe it, and does it? No script can answer this; the row has to
+  name the kind of change clearly enough that an agent recognises its own diff in
+  it. A row that only names docs ("DESIGN.md, API.md") is useless backwards.
+
+Omission is the direction that gets missed, because nothing is wrong on the page
+— there is simply no page.
 
 ## Step 1 — enumerate the kinds of change
 
@@ -65,6 +76,11 @@ repo:
 Note what it took to get that table right: the "app shell" phrase was added *after*
 an audit found that nav and theme changes had slipped past a row that only said "a
 screen". When drift gets through, the fix is usually a row, not a lecture.
+
+Each row is a sentence an agent should be able to match its own diff against, so
+write the *kind of change*, not just the artefact: "a Server Action, a validation
+schema, a `lib/` read helper, or an auth/route change" is recognisable from a
+diff; "API surface" is not.
 
 ## Step 4 — name the docs nothing owns
 

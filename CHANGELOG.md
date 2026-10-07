@@ -6,6 +6,17 @@ minor bump, a change to a reference doc or script pattern is a patch.
 
 ## Unreleased
 
+- "Docs are part of the change" covers omission, not just drift (minor).
+  Principle 3 and the rule text now require documenting new behaviour in the same
+  commit, alongside fixing what the change made untrue: a falsification test only
+  fires on a statement that exists, so behaviour no doc mentioned used to satisfy
+  the rule by saying nothing. The self-check is now two-directional — the grep for
+  drift, the ownership table read backwards for omission, which no script can do
+  (`reference/agents-md-structure.md` §6, `reference/docs-ownership.md`). Audit
+  mode gains a code→docs pass and an *Undocumented* triage bucket
+  (`reference/audit-checklist.md` §13); bootstrap's verify step gains the backwards
+  check. Ownership-table rows must now name the kind of change recognisably
+  enough to match a diff against, since that is what the backwards read needs.
 - Git conventions are part of the procedure (minor). Discovery records how change
   enters the repo — branch model, the commit-message convention actually in the
   log, hooks and local checks, signing, host rules, releases
