@@ -6,6 +6,12 @@ minor bump, a change to a reference doc or script pattern is a patch.
 
 ## Unreleased
 
+- `scripts/coverage-summary.sh` (patch): one or more lcov files → a Markdown
+  coverage report — totals per file (suites not merged), and with `--base` each
+  changed file's coverage, flagging 0% and changed source files missing from the
+  report. Report only: exit 0 whatever the numbers, 2 for bad input. Resolves
+  absolute (POSIX, Windows, Git Bash) and package-relative `SF:` paths to
+  repo-relative ones. CI smoke-tests it on an inline lcov.
 - Principle 8: tests are part of the change (minor). A bug fix lands with a test
   that fails without the fix; new or changed behaviour lands with a test at the
   cheapest layer that can see it; a refactor changes no assertions; a layer with

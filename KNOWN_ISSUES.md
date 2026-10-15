@@ -27,21 +27,28 @@ place** (and why it must stay) Â· **Fix plan** (ends with "delete this entry") Â
 
 **Symptom.** `scripts/scan-secrets.sh` and `scripts/doc-drift.sh` are verified by
 `sh -n`, `shellcheck`, a self-scan in CI, and a manual run against the ATLAS repo
-(expected results recorded in AGENTS.md "Commands"). A change to a pattern or to
-the identifier extraction has no test that would catch a regression.
+(expected results recorded in AGENTS.md "Commands"). `scripts/coverage-summary.sh`
+has one CI smoke case (totals of a two-line lcov) and a manual fixture run. A
+change to a pattern, the identifier extraction or the lcov path resolution has no
+test that would catch a regression.
 
 **Cause.** The scripts were written against one real repository and checked by
 hand. No fixture repo exists.
 
-**Workaround in place.** The manual check in AGENTS.md "Commands": run both scripts
-in a clone of the ATLAS repo and compare with the recorded expectations. It must be
-done before a release that touches either script.
+**Workaround in place.** The manual checks in AGENTS.md "Commands": run
+`scan-secrets` and `doc-drift` in a clone of the ATLAS repo and compare with the
+recorded expectations; run `coverage-summary` on a fixture lcov and on real runner
+output. They must be done before a release that touches any script.
 
 **Fix plan.** A `tests/` directory with a POSIX script that builds a throwaway git
 repo (`git init` in `mktemp -d`) containing: a planted JWT-shaped token in one
 commit, a committed `.env`, an env example with a non-placeholder value, a source
 file with `function setBudget` changed in its body only, and a doc that mentions
 `setBudget`. Assert `scan-secrets` exits 1 with 2 HIGH and 1 REVIEW, and
-`doc-drift` names `setBudget` once. Wire it into CI, then delete this entry.
+`doc-drift` names `setBudget` once. For `coverage-summary`: an lcov with a
+relative `SF:` under a package dir, a Windows absolute `SF:` with CRLF endings, a
+changed file at 0%, and a changed source file absent from the lcov; assert both
+paths resolve, the 0% row and the "not in report" row appear, and a test file and
+a Markdown file are not listed. Wire it into CI, then delete this entry.
 
 **Since.** Initial commit (2026-09-16).

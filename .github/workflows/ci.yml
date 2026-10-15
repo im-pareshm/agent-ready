@@ -2,7 +2,8 @@ name: CI
 
 # One path, because there is nothing slow here: parse and lint the scripts, then
 # run them against this repository. The secrets scan must exit 0 on our own
-# history; the drift script must run without error on the last commit.
+# history; the drift script must run without error on the last commit; the
+# coverage summary must total a tiny inline lcov correctly.
 
 on:
   push:
@@ -33,3 +34,9 @@ jobs:
 
       - name: Drift script smoke test
         run: sh scripts/doc-drift.sh HEAD~1
+
+      - name: Coverage summary smoke test
+        run: |
+          printf 'SF:scripts/doc-drift.sh\nDA:1,1\nDA:2,0\nend_of_record\n' > "$RUNNER_TEMP/lcov.info"
+          sh scripts/coverage-summary.sh --base HEAD~1 "$RUNNER_TEMP/lcov.info" | tee "$RUNNER_TEMP/out.md"
+          grep -q '50.0% (1/2)' "$RUNNER_TEMP/out.md"

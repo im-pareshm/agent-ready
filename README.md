@@ -151,12 +151,13 @@ reference/                  the detail each step points to
 scripts/
   scan-secrets.sh           history + working-tree secrets scan (POSIX sh, git, grep)
   doc-drift.sh              identifiers in a diff → every doc line mentioning them
+  coverage-summary.sh       lcov → Markdown coverage report, incl. changed files
 examples/atlas/             a real result, with before/after
 AGENTS.md                   this repo's own, produced by the skill
 CLAUDE.md                   pointer to AGENTS.md (what the skill writes for Claude Code)
 KNOWN_ISSUES.md             this repo's own parked-fix ledger
 CHANGELOG.md                versions; the procedure is what's versioned
-.github/workflows/ci.yml    parse + shellcheck + self-scan
+.github/workflows/ci.yml    parse + shellcheck + self-scan + smoke runs
 ```
 
 ## Contributing
