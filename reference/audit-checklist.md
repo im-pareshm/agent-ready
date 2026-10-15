@@ -22,8 +22,13 @@ expects (found by *running* the sequence, never by reading the comment).
 sentence in the doc. If the suite is safe to run (see `testing-safety.md`), run it
 and use the real pass count.
 
+If the repo writes lcov, run `scripts/coverage-summary.sh` on it and check every
+coverage sentence against it. A percentage written into a doc is a finding on its
+own: replace it with the command that produces it.
+
 *Typical drift:* "covers every screen" when half the specs don't compile; a suite
-described as passing that hasn't been run since a refactor.
+described as passing that hasn't been run since a refactor; "85% coverage" in a
+README, true once.
 
 ## 3. UI labels, buttons, and controls
 

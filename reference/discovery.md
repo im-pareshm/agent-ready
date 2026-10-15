@@ -70,6 +70,11 @@ Before running anything:
 4. Only then run the suite, against a throwaway store, and record the real
    pass/fail count. This number — not the README's number — is the coverage claim.
 5. Note what the tests **don't** cover. Absences are what AGENTS.md must state.
+6. **Coverage tooling.** Does the runner measure coverage, with what flag does it
+   write lcov, and does that need a dependency the repo doesn't have yet (see
+   the table in `ci-principles.md`)? If it works without one, run it and
+   `scripts/coverage-summary.sh` on the result — the summary is evidence for
+   item 5, better than reading spec names.
 
 ## 4. CI
 

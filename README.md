@@ -49,8 +49,9 @@ The skill separates what can be **derived from code** (and verified) from what o
 
 Also, when discovery finds the gap: a CI workflow shaped for your stack, an env
 example whose paths actually work, `.gitignore` additions for uncovered secrets —
-and, if you want it, a CI gate that fails a PR changing code without touching a
-test.
+and, if you want them, a CI gate that fails a PR changing code without touching a
+test, and a coverage summary (totals, plus the files the PR changed) in the job
+summary and locally. The summary only reports; it never fails a build.
 
 Nothing is created as a stub. If a repo has nothing to derive, a single complete
 `AGENTS.md` is the right output — it is the fallback owner for every kind of

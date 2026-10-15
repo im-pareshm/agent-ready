@@ -114,6 +114,43 @@ and the remote is GitHub), and check every rule below against it.
     - A pre-push hook can run the same lines for earlier feedback, if the repo uses
       hooks. CI is the copy that can't be skipped.
 
+## Coverage summary (a report, never a gate)
+
+12. **The fast path publishes a coverage summary; nothing fails on it.** Run the
+    unit suite with the runner's own coverage writing lcov (column in the table
+    below), then turn it into Markdown with the skill's
+    `scripts/coverage-summary.sh`, copied into the repo (e.g. `scripts/` or
+    `.github/scripts/`) with its header intact:
+
+    ```yaml
+    # Coverage summary: report only — nothing here fails the build. The test gate
+    # (if any) is the enforcement; these numbers are for reading.
+    - name: Coverage summary
+      if: always()
+      run: >
+        sh scripts/coverage-summary.sh --base "origin/${GITHUB_BASE_REF:-main}"
+        coverage/lcov.info >> "$GITHUB_STEP_SUMMARY"
+    ```
+
+    - **Two sections, both useful.** Totals per suite — one row per lcov, never
+      merged into one number that hides an untested package — and the files the
+      PR changed. The second is the one a reviewer acts on: a changed file at 0%
+      or missing from the report means the PR's tests don't reach it, which the
+      test gate (§11) can't see.
+    - **Job summary, not a PR comment.** It needs no write permission and works
+      on PRs from forks. Other hosts: their native coverage report if they have
+      one, otherwise the job log.
+    - **Upload the full HTML report** as an artifact with a short retention, as
+      in §9, for anyone who wants line-level detail.
+    - **Full history in the checkout** (`fetch-depth: 0`) for the changed-files
+      section, as for §11.
+    - **No percentages in docs.** The job summary is where the current numbers
+      live; AGENTS.md says how to get them. A number written into a doc is stale
+      by the next merge.
+    - **The coverage provider may be a new dependency** (`@vitest/coverage-v8`,
+      `pytest-cov`, a Go or Rust converter). That is the human's call in Step 2,
+      not something to add in passing.
+
 ## Verify
 
 After writing or changing a workflow: push it on a branch and open a PR so the fast
@@ -121,7 +158,8 @@ path runs; merge and watch the slow path. Read the log, not just the badge. A CI
 workflow that has never run is a claim, not a check — exactly the kind of thing
 AGENTS.md must not assert. For a test gate, that means two runs: a PR with a
 code-only change, which must fail, and the same PR with the trailer or a test
-added, which must pass.
+added, which must pass. For a coverage summary: open the run's summary page and
+check the changed-files section lists the PR's files.
 
 ## Stack hints (commands, not templates)
 
@@ -131,6 +169,17 @@ added, which must pass.
 | Python | `pip install -e .[dev]` / `uv sync` · `ruff check` · `mypy` · `pytest -m "not e2e"` | `pytest -m e2e` against a service container |
 | Go | `go vet ./...` · `golangci-lint` · `go test ./...` | `go test -tags=integration ./...` |
 | Rust | `cargo fmt --check` · `cargo clippy -- -D warnings` · `cargo test` | `cargo test --features integration` |
+
+Coverage as lcov, for §12:
+
+| Runner | Flags | Extra dependency |
+|---|---|---|
+| Vitest | `--coverage --coverage.reporter=lcov` | `@vitest/coverage-v8` |
+| Jest | `--coverage --coverageReporters=lcov` | none |
+| `node --test` | `--experimental-test-coverage --test-reporter=lcov --test-reporter-destination=lcov.info` — pass a glob (`"test/*.test.js"`); a bare directory argument produced an empty lcov on Node 24 / Windows | none |
+| pytest | `--cov --cov-report=lcov` | `pytest-cov` |
+| Go | `-coverprofile=cover.out`, then a converter to lcov | a converter (e.g. `gcov2lcov`) |
+| Rust | `cargo llvm-cov --lcov --output-path lcov.info` | `cargo-llvm-cov` |
 
 Use what the repo's own scripts define; don't introduce a tool the repo doesn't
 already use just to fill a step.

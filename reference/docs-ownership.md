@@ -39,7 +39,7 @@ isn't here.
 | Commands, scripts, file layout, entry points | manifest scripts, Makefile, new top-level dirs |
 | Interfaces: routes, actions, CLI commands, public exports | handlers, actions files, command registry |
 | Env vars, config, deploy steps | env example, config loaders, CI env blocks, infra files |
-| Test setup, suites, coverage, where a kind of test goes | test config, fixtures, new/deleted spec files, a new test directory or runner, the CI test gate's paths |
+| Test setup, suites, coverage, where a kind of test goes | test config, fixtures, new/deleted spec files, a new test directory or runner, the CI test gate's paths, coverage config or the coverage step |
 | Feature scope: what's in, what's deferred | — (a product decision) |
 | A fix you're parking | an exclusion, a `.skip`, a workaround |
 | Default branch, CI triggers | workflow files |

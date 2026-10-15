@@ -1,6 +1,6 @@
 ---
 name: agent-ready
-description: Make a repository ready for AI-assisted development — verified, self-maintaining docs (AGENTS.md plus pointers for every tool, KNOWN_ISSUES.md, docs derived from the code), safe-to-run tests, a tests-with-every-change rule, a sound CI shape, and public-repo hygiene. Use when asked to set up or write AGENTS.md / CLAUDE.md, make a repo "agent-ready", audit the docs against the code, set rules so every change comes with tests, check a repo for leaked secrets before publishing, or when you start work in a repo that has no agent instructions.
+description: Make a repository ready for AI-assisted development — verified, self-maintaining docs (AGENTS.md plus pointers for every tool, KNOWN_ISSUES.md, docs derived from the code), safe-to-run tests, a tests-with-every-change rule, a coverage summary, a sound CI shape, and public-repo hygiene. Use when asked to set up or write AGENTS.md / CLAUDE.md, make a repo "agent-ready", audit the docs against the code, set rules so every change comes with tests, check a repo for leaked secrets before publishing, or when you start work in a repo that has no agent instructions.
 ---
 
 # agent-ready
@@ -77,7 +77,8 @@ Collect, with evidence, before writing a word:
   until you know what it resets. Then, for each kind of change the repo has (a
   pure function, a route, a screen, a CLI command), where a test for it would go
   and whether a harness exists at that layer — this becomes the "where tests go"
-  table.
+  table. Also whether the runner can write coverage as lcov, and whether that
+  needs a new dependency.
 - **CI.** Existing workflows: triggers, jobs, the default branch name, whether the
   triggers match it.
 - **Git.** How change enters the repo, from the log and the hooks — not from a
@@ -113,8 +114,10 @@ pre-filled where you have one so they can just confirm:
 5. **Tests.** Show the "where tests go" table from discovery and the rule you
    will write (`reference/agents-md-structure.md` §9). Ask: for the layers with no
    harness, add one now, or record them as untested? Should CI fail a PR that
-   changes code without touching a test (`reference/ci-principles.md` §11)? A new
-   test framework or a blocking gate is their decision, not yours.
+   changes code without touching a test (`reference/ci-principles.md` §11)? A
+   coverage summary, locally and in CI — report only, never failing the build
+   (§12)? A new test framework, a coverage dependency or a blocking gate is their
+   decision, not yours.
 6. **Authoritative docs.** Where two existing docs disagree, which wins? Any doc
    that is historical and should be marked superseded?
 7. **Tools.** Which AI tools do they and collaborators use? (Decides which pointer
@@ -167,7 +170,9 @@ AGENTS.md is enough.
 **Also, when discovery found the gap:** a CI workflow shaped per
 `reference/ci-principles.md` (never a template — the stack decides); an env example
 with placeholders and paths that actually work; `.gitignore` additions for uncovered
-secret or database files; the test gate in CI, if the human said yes in Step 2.
+secret or database files; the test gate in CI, if the human said yes in Step 2;
+the coverage summary, if they said yes — the coverage command in AGENTS.md
+"Commands", `scripts/coverage-summary.sh` copied into the repo, and the CI step.
 
 ### Step 4 — Verify (this is the step that makes it worth doing)
 
@@ -185,7 +190,9 @@ secret or database files; the test gate in CI, if the human said yes in Step 2.
    store per `reference/testing-safety.md`, and write down the incantation in the
    Testing section so the next person doesn't have to work it out. Check every
    row of the "where tests go" table: the path exists and the runner picks up a
-   file placed there (a runner's `include` glob can silently exclude it).
+   file placed there (a runner's `include` glob can silently exclude it). If
+   there is a coverage command, run it and `scripts/coverage-summary.sh` on its
+   lcov; an empty report means the command is wrong, not that nothing is tested.
 
 ### Step 5 — Report
 
@@ -293,4 +300,5 @@ Before a repo becomes public or gets its first remote:
 | `reference/ci-principles.md` | The shape a CI workflow must have, whatever the stack |
 | `scripts/scan-secrets.sh` | History + working-tree secrets scan (POSIX sh, git, grep) |
 | `scripts/doc-drift.sh` | Identifiers in a diff → every doc line that mentions them |
+| `scripts/coverage-summary.sh` | lcov → Markdown coverage report: totals per suite, and each changed file's coverage (report only) |
 | `examples/atlas/` | A real repo's AGENTS.md and KNOWN_ISSUES.md produced this way, with the before/after |

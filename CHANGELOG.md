@@ -6,6 +6,13 @@ minor bump, a change to a reference doc or script pattern is a patch.
 
 ## Unreleased
 
+- Coverage summary, locally and in CI — report only (minor). Discovery records
+  whether the runner writes lcov and at what dependency cost; Step 2 offers the
+  summary; bootstrap copies `scripts/coverage-summary.sh` into the repo and wires
+  a job-summary step (`reference/ci-principles.md` §12, with an lcov-flags table
+  per runner). The tests rule gains "run the summary before finishing; a changed
+  file at 0% or not in the report isn't reached". Coverage percentages never go
+  in docs; audit treats one as a finding (`reference/audit-checklist.md` §2).
 - `scripts/coverage-summary.sh` (patch): one or more lcov files → a Markdown
   coverage report — totals per file (suites not merged), and with `--base` each
   changed file's coverage, flagging 0% and changed source files missing from the

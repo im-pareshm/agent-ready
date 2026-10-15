@@ -40,6 +40,9 @@ on what it is for and any gotcha you hit:
   server: it caches the old generated client.
 ```
 
+If the repo has a coverage command, it is listed here like any other — run, with
+the summary line that follows it (§9).
+
 Not here: commands you didn't run, commands that exist but nobody uses, the
 package manager's generic help.
 
@@ -146,6 +149,15 @@ each kind of test goes. The rule text, adjusted to the repo's layers:
 > commit message and add a KNOWN_ISSUES.md entry naming the untested behaviour.
 > Never skip a test, loosen an assertion or delete a failing test to make a change
 > pass; a test that is itself wrong is fixed in its own commit, with the reason.
+>
+> Before finishing, run the coverage command and
+> `sh scripts/coverage-summary.sh --base origin/main <lcov>`. A changed file at 0%,
+> or listed as "not in report", means your test doesn't reach it.
+
+The last paragraph only when the human chose a coverage summary in Step 2. Its
+numbers never go in AGENTS.md — they are stale by the next merge; CI's job
+summary has the current ones. What does go here is the coverage command and,
+qualitatively, what isn't covered (the negative claims above).
 
 The table is repo-specific, from discovery, and every path in it is checked
 (Step 4). From the example repo:
@@ -167,7 +179,9 @@ every kind of change.
 What runs where: which jobs on PRs, which on the default branch, why the split.
 Name the default branch. If a job is expected to be red, say why and link the
 KNOWN_ISSUES entry. If there is a test gate, name the paths it treats as code and
-as tests, and the exemption trailer (`ci-principles.md` §11).
+as tests, and the exemption trailer (`ci-principles.md` §11). If there is a
+coverage summary, say where it appears (the job summary) and that it never fails
+the build (`ci-principles.md` §12).
 
 ## 11. Git
 
