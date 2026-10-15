@@ -107,7 +107,7 @@ ctop="$(canon "$top")"
 : > "$tmp/records"
 : > "$tmp/suites"
 for f in "$@"; do
-  [ -f "$f" ] && [ -r "$f" ] || { echo "coverage-summary: cannot read $f" >&2; exit 2; }
+  if [ ! -f "$f" ] || [ ! -r "$f" ]; then echo "coverage-summary: cannot read $f" >&2; exit 2; fi
   # The lcov file's directory, repo-relative: where relative SF: paths are tried
   # first. Asked of git, not derived from pwd — Git Bash's /tmp mount and symlinks
   # give pwd a different spelling of the same directory.

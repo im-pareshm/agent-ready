@@ -31,7 +31,10 @@ Bash (Windows), and in CI on Ubuntu.
 
 - `sh -n scripts/<name>.sh` — parse check; the cheap gate.
 - `npx --yes shellcheck -s sh scripts/*.sh` — lint (CI installs shellcheck via apt;
-  locally `npx` fetches a binary). Both scripts pass clean; keep it that way.
+  locally `npx` fetches a binary). All scripts pass clean; keep it that way. The
+  versions differ — CI has Ubuntu's 0.9.0, `npx` fetched 0.11.0 (2026-10-15) —
+  and 0.9.0 flags some info-level checks 0.11.0 doesn't (SC2015 on
+  `A && B || C`). CI's is the one that counts; write the explicit `if`.
 - `sh scripts/scan-secrets.sh [repo]` — the secrets scan. Exit 0 clean, 1 findings,
   2 not a git repo. Run it on this repo before every push: it must exit 0.
 - `sh scripts/doc-drift.sh [range|--ids-only]` — doc-mention lookup for a diff. Always
