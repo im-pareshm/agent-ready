@@ -6,6 +6,9 @@ minor bump, a change to a reference doc or script pattern is a patch.
 
 ## Unreleased
 
+- This repo's own decisions move to `docs/decisions/` (eight records and an
+  index), following principle 9; AGENTS.md "Decisions to preserve" now holds the
+  rule, the index link and the four most at risk.
 - Principle 9: decisions are part of the change (minor). A choice someone could
   reasonably undo — a dependency, a pattern over an obvious alternative, a scope
   cut, a trade-off, a reversal — is recorded in the same commit: one file per

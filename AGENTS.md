@@ -15,7 +15,8 @@ coding tool; extracted from a real project (`examples/atlas/`).
 Out of scope by decision (from the design discussion, 2026-09-16): CI templates
 (the stack decides; the skill ships principles), generating requirements or design
 docs (intent comes from the human), and any claim that agents will *follow* the
-docs — the skill can only make them true.
+docs — the skill can only make them true. See
+[0006](docs/decisions/0006-out-of-scope.md).
 
 ## Status
 
@@ -85,6 +86,8 @@ four commits), 2 INFO; `doc-drift d8844df~1..d8844df` resolves `setCap` to one
 - **`CHANGELOG.md`** — versions. A change to a principle or a step is a minor bump;
   a reference-doc or script-pattern change is a patch.
 - **`KNOWN_ISSUES.md`** — parked problems. Skim before starting work.
+- **`docs/decisions/`** — one record per decision, indexed in its `README.md`.
+  Authoritative for *why* something is the way it is.
 
 Don't duplicate content across these; link.
 
@@ -104,6 +107,7 @@ doc:
 | The example | re-copy from the source repo, update the date in `examples/atlas/README.md` |
 | CI | `.github/workflows/ci.yml`'s header comment; "CI" here |
 | How commits, tags or releases are made | "Git" here; `CHANGELOG.md`'s header if what a version means changes |
+| A decision: a script's language or dependencies, a template added, scope, a convention, reversing an earlier one | a new record in `docs/decisions/` and its index row; the one-liners in "Decisions to preserve" if it's one an agent would undo |
 
 Self-check before finishing, both directions:
 
@@ -115,19 +119,22 @@ Self-check before finishing, both directions:
 
 ## Decisions to preserve
 
-- **Principles are the product.** `SKILL.md`'s nine principles and the
-  verify-before-report step are what distinguish this from an AGENTS.md template.
-  Changes to them go through an issue, not a drive-by PR.
-- **No templates for stack-specific output.** A CI template would be wrong for
-  most stacks and would be copied without thought. Principles + the agent's own
-  discovery produce a workflow that fits.
-- **Scripts are POSIX sh with no runtime dependency.** The audience includes
-  Windows developers on Git Bash and repos with no Node or Python. Portability
-  beats convenience.
-- **Ship scripts *and* describe what they do.** Deterministic when they can run;
-  the description lets an agent do the job by hand when they can't.
-- **Examples are real.** A synthetic example would be a plausible doc — the thing
-  this skill exists to prevent.
+**Decisions are part of the change.** A change that makes a choice someone could
+reasonably undo — a dependency, a pattern over an obvious alternative, a scope
+cut, a trade-off — records it in the same commit: a new file in
+`docs/decisions/` and a row in its index. If you made the choice yourself, its
+status is *proposed* until Paresh accepts it. Reversing a decision is a new
+record that supersedes the old one; accepted records are never deleted. Format:
+`reference/decision-records.md`.
+
+Index: [docs/decisions/README.md](docs/decisions/README.md) — check it before
+changing a script's language, adding a template, or touching history. The ones
+most often undone by accident:
+
+- Scripts are POSIX sh, no runtime dependency — [0003](docs/decisions/0003-posix-sh-scripts.md)
+- No templates for stack-specific output — [0002](docs/decisions/0002-no-stack-specific-templates.md)
+- Examples are real — [0005](docs/decisions/0005-examples-are-real.md)
+- Never rewrite history unless explicitly asked — [0007](docs/decisions/0007-never-rewrite-history.md)
 
 ## Testing
 
@@ -156,16 +163,15 @@ enough to split.
 - Linear history on `main`, no merge commits (six commits, one author, as of
   2026-09-20). Branch protection: Unknown — check the repository settings on
   GitHub; `gh` is not installed locally.
-- **Never touch history unless explicitly asked** (decision, 2026-09-20): no
-  amend, rebase, reset or force-push on any branch without an instruction that
-  names it. New commits only. On `main` there is a mechanical reason too: users
-  install by cloning it and update with `git pull`.
-- **Subjects are `Scope: what changed`** (decision, 2026-09-20; every commit so
-  far already follows it): the scope is the area touched — Scripts, Reference
-  docs, Example, CI, Release — then what changed, in plain words. "Scripts:
-  scan-secrets.sh and doc-drift.sh (POSIX sh)". Not Conventional Commits: nothing
-  here consumes a `type:` prefix (CHANGELOG.md is written by hand), so the
-  ceremony would buy nothing. No hooks, no `core.hooksPath`, no signing config —
+- **Never touch history unless explicitly asked**
+  ([0007](docs/decisions/0007-never-rewrite-history.md)): no amend, rebase, reset
+  or force-push on any branch without an instruction that names it. New commits
+  only.
+- **Subjects are `Scope: what changed`**
+  ([0008](docs/decisions/0008-commit-subjects-scope-what-changed.md)): the scope
+  is the area touched — Scripts, Reference docs, Example, CI, Release, Procedure,
+  Dogfood — then what changed, in plain words. "Scripts: scan-secrets.sh and
+  doc-drift.sh (POSIX sh)". No hooks, no `core.hooksPath`, no signing config —
   match it by hand.
 - Before every push: `sh scripts/scan-secrets.sh` exits 0, and `sh -n` +
   shellcheck if a script changed (see Commands). CI repeats both.

@@ -159,6 +159,7 @@ scripts/
   doc-drift.sh              identifiers in a diff → every doc line mentioning them
   coverage-summary.sh       lcov → Markdown coverage report, incl. changed files
 examples/atlas/             a real result, with before/after
+docs/decisions/             this repo's own decision records + index
 AGENTS.md                   this repo's own, produced by the skill
 CLAUDE.md                   pointer to AGENTS.md (what the skill writes for Claude Code)
 KNOWN_ISSUES.md             this repo's own parked-fix ledger
