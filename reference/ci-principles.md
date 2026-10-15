@@ -74,12 +74,54 @@ and the remote is GitHub), and check every rule below against it.
     to fail (a suite under repair), the reason and the KNOWN_ISSUES entry are named
     in AGENTS.md "CI". Silent red trains people to ignore red.
 
+## Test gate (only when the human asked for one)
+
+11. **A PR that changes code without touching a test fails — unless a commit says
+    why.** The check is the diff, not a coverage number. On PRs only (it needs a
+    base to diff against): list the changed files; if any is under the repo's code
+    paths and none is under its test paths, fail, unless a commit in the PR carries
+    a `Test-exempt: <reason>` trailer. The core is a few lines of sh whatever the
+    stack — the paths are the repo's own, from AGENTS.md "Testing":
+
+    ```sh
+    # Test gate: code changed with no test fails unless a commit says why.
+    # Code and test paths must match the "where tests go" table in AGENTS.md.
+    base="origin/${GITHUB_BASE_REF:-main}"
+    files="$(git diff --name-only "$base"...HEAD)"
+    code="$(printf '%s\n' "$files" | grep -E '^src/' | grep -vE '\.(test|spec)\.')"
+    tests="$(printf '%s\n' "$files" | grep -E '^tests/|\.(test|spec)\.')"
+    if [ -n "$code" ] && [ -z "$tests" ] &&
+       ! git log --format=%B "$base"..HEAD | grep -q '^Test-exempt: .'; then
+      echo "Code changed with no test. Add one, or a 'Test-exempt: <reason>' trailer:" >&2
+      printf '%s\n' "$code" >&2
+      exit 1
+    fi
+    ```
+
+    - **Full history in the checkout** (`fetch-depth: 0` on `actions/checkout`), or
+      the base isn't there to diff against.
+    - **The exemption is a commit trailer, not a PR label.** It works on every
+      host, survives in history, and puts the reason where a reviewer reads it.
+      Refactors and dependency bumps use it: `Test-exempt: refactor, no behaviour
+      change`.
+    - **It catches the forgotten test, not the useless one.** A test file that
+      changed proves nothing about whether it exercises the change; review and the
+      AGENTS.md rule do that. Say so in the workflow header so nobody mistakes the
+      gate for proof.
+    - **Coverage thresholds are a weaker gate.** A global percentage can't tell
+      which code a change touched, and it rewards tests written for the number. If
+      the repo already has one, keep it; don't add one in place of the diff check.
+    - A pre-push hook can run the same lines for earlier feedback, if the repo uses
+      hooks. CI is the copy that can't be skipped.
+
 ## Verify
 
 After writing or changing a workflow: push it on a branch and open a PR so the fast
 path runs; merge and watch the slow path. Read the log, not just the badge. A CI
 workflow that has never run is a claim, not a check — exactly the kind of thing
-AGENTS.md must not assert.
+AGENTS.md must not assert. For a test gate, that means two runs: a PR with a
+code-only change, which must fail, and the same PR with the trailer or a test
+added, which must pass.
 
 ## Stack hints (commands, not templates)
 

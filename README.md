@@ -48,7 +48,9 @@ The skill separates what can be **derived from code** (and verified) from what o
 | **Offered, needs you** | `DECISIONS.md` (ADR-lite: the agent lists the patterns it observed, you supply the *why*) · `USER_GUIDE.md` (screen-by-screen draft from the code, you add the workflow) | Code-seeded, human-completed |
 
 Also, when discovery finds the gap: a CI workflow shaped for your stack, an env
-example whose paths actually work, `.gitignore` additions for uncovered secrets.
+example whose paths actually work, `.gitignore` additions for uncovered secrets —
+and, if you want it, a CI gate that fails a PR changing code without touching a
+test.
 
 Nothing is created as a stub. If a repo has nothing to derive, a single complete
 `AGENTS.md` is the right output — it is the fallback owner for every kind of
@@ -81,6 +83,10 @@ Each one was earned the hard way in the example repo.
    it at a throwaway store; import app helpers into tests, never copy them.
 6. **AGENTS.md stays small and tool-agnostic.** Pointers, not copies, for each tool.
 7. **Respect what exists.** Layouts, docs and conventions are mapped, not replaced.
+8. **Tests are part of the change.** A bug fix lands with a test that fails without
+   it; new behaviour lands with a test that exercises it. AGENTS.md says where each
+   kind of test goes; a layer with no harness yet is parked in `KNOWN_ISSUES.md`,
+   never skipped silently.
 
 ## Install
 

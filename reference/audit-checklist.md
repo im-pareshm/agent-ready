@@ -136,6 +136,25 @@ Run this last — it needs the whole inventory — and expect it to be the pass 
 produces the most work, especially in a repo whose docs were written once at the
 start.
 
+## 14. Changes that landed without tests
+
+Only when AGENTS.md has the tests-are-part-of-the-change rule. The rule is a
+claim about history like any other, and this checks it.
+
+*How:* from the date the rule was adopted, `git log --name-only` — for each commit
+that touched code paths in the "where tests go" table and no test path, read the
+subject and diff: a refactor, a docs or config change, or a `Test-exempt:` trailer
+with a reason is fine. Anything else is a finding: behaviour that shipped
+untested. Then check the table itself — every path exists, the runner picks up a
+file there, and no layer the code now has is missing a row.
+
+*Typical drift:* bug fixes with no regression test; a new route tested only by the
+build; a skipped test with no KNOWN_ISSUES entry; a table naming a directory the
+runner's `include` glob no longer covers.
+
+Triage each as *Parked* (a KNOWN_ISSUES entry naming the untested behaviour) unless
+the test is cheap enough to write now.
+
 ## Triage
 
 Every finding lands in exactly one bucket:
@@ -145,7 +164,7 @@ Every finding lands in exactly one bucket:
 | Drift — code is the truth | Fix the doc now | One commit per doc, or one for the audit |
 | Undocumented — the code does something no doc mentions | Write it into the owning doc, or the AGENTS.md section if nothing owns it | With the doc fixes |
 | Product question | Ask; don't decide | — until answered |
-| Bug — the doc is right, the code is wrong | Fix if small and unambiguous, else KNOWN_ISSUES entry | Own commit, clearly labelled `fix:` |
+| Bug — the doc is right, the code is wrong | Fix if small and unambiguous, with a test that fails without the fix; else KNOWN_ISSUES entry | Own commit, clearly labelled `fix:` |
 | Parked | KNOWN_ISSUES entry naming the workaround | Same commit as the workaround |
 
 ## Report format

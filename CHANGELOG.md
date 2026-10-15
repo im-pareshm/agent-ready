@@ -6,6 +6,17 @@ minor bump, a change to a reference doc or script pattern is a patch.
 
 ## Unreleased
 
+- Principle 8: tests are part of the change (minor). A bug fix lands with a test
+  that fails without the fix; new or changed behaviour lands with a test at the
+  cheapest layer that can see it; a refactor changes no assertions; a layer with
+  no harness is parked in KNOWN_ISSUES.md, never skipped silently. Discovery maps
+  each kind of change to where its test goes; Step 2 asks about untested layers
+  and an optional CI gate; AGENTS.md "Testing" gets the rule text and a "where
+  tests go" table (`reference/agents-md-structure.md` §9), checked in Step 4.
+  CI gains the test-gate shape — a diff check with a `Test-exempt:` trailer, not a
+  coverage threshold (`reference/ci-principles.md` §11). Audit checks commits since
+  the rule was adopted for untested behaviour (`reference/audit-checklist.md` §14),
+  and a bug fixed during an audit comes with its failing test.
 - "Docs are part of the change" covers omission, not just drift (minor).
   Principle 3 and the rule text now require documenting new behaviour in the same
   commit, alongside fixing what the change made untrue: a falsification test only

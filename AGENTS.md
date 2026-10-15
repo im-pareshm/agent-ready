@@ -101,7 +101,7 @@ Self-check before finishing, both directions:
 
 ## Decisions to preserve
 
-- **Principles are the product.** `SKILL.md`'s seven principles and the
+- **Principles are the product.** `SKILL.md`'s eight principles and the
   verify-before-report step are what distinguish this from an AGENTS.md template.
   Changes to them go through an issue, not a drive-by PR.
 - **No templates for stack-specific output.** A CI template would be wrong for
@@ -122,6 +122,10 @@ self-scan in CI are the gates, plus the manual run against the ATLAS repo descri
 under Commands. A fixture-based test (a tiny generated git repo with a planted
 token, a planted `.env`, and a doc that mentions a changed function) is the obvious
 next step and is listed in KNOWN_ISSUES.md.
+
+Tests are part of the change (principle 8) here too. Until that harness exists, a
+script change is covered by the manual ATLAS run under Commands, and its result
+goes in the commit message; once it exists, a script change adds a fixture case.
 
 ## CI
 

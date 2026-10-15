@@ -1,6 +1,6 @@
 ---
 name: agent-ready
-description: Make a repository ready for AI-assisted development — verified, self-maintaining docs (AGENTS.md plus pointers for every tool, KNOWN_ISSUES.md, docs derived from the code), safe-to-run tests, a sound CI shape, and public-repo hygiene. Use when asked to set up or write AGENTS.md / CLAUDE.md, make a repo "agent-ready", audit the docs against the code, check a repo for leaked secrets before publishing, or when you start work in a repo that has no agent instructions.
+description: Make a repository ready for AI-assisted development — verified, self-maintaining docs (AGENTS.md plus pointers for every tool, KNOWN_ISSUES.md, docs derived from the code), safe-to-run tests, a tests-with-every-change rule, a sound CI shape, and public-repo hygiene. Use when asked to set up or write AGENTS.md / CLAUDE.md, make a repo "agent-ready", audit the docs against the code, set rules so every change comes with tests, check a repo for leaked secrets before publishing, or when you start work in a repo that has no agent instructions.
 ---
 
 # agent-ready
@@ -40,6 +40,13 @@ damage in a real repo (see `examples/atlas/`).
 7. **Respect what exists.** Existing docs, folder layout (`docs/`, ADRs, wiki),
    naming and conventions are inventoried and mapped, not replaced. Tool-read files
    must be at the repo root; everything else goes where the repo already keeps docs.
+8. **Tests are part of the change.** A bug fix lands with a test that fails
+   without the fix; new or changed behaviour lands with a test that exercises it,
+   at the cheapest layer that can see it. A refactor changes no assertions. Where
+   no test can be written yet — that layer has no harness — it is a parked fix
+   (principle 4), never a silent skip. AGENTS.md says where each kind of test goes;
+   CI checks what a diff can show, if the human wants it. A passing build is not a
+   test: it doesn't catch an arithmetic mistake.
 
 ## Choose a mode
 
@@ -67,7 +74,10 @@ Collect, with evidence, before writing a word:
   monorepo/workspace (then plan a root AGENTS.md plus one per package).
 - **Tests.** Frameworks, how many suites/files, what they actually cover, whether
   any test resets or seeds a database and from which env var. Do not run a suite
-  until you know what it resets.
+  until you know what it resets. Then, for each kind of change the repo has (a
+  pure function, a route, a screen, a CLI command), where a test for it would go
+  and whether a harness exists at that layer — this becomes the "where tests go"
+  table.
 - **CI.** Existing workflows: triggers, jobs, the default branch name, whether the
   triggers match it.
 - **Git.** How change enters the repo, from the log and the hooks — not from a
@@ -100,12 +110,17 @@ pre-filled where you have one so they can just confirm:
    is that deliberate? Is there a convention the log doesn't show yet that agents
    should follow? Which actions must an agent never take here without asking —
    force-push, rewriting history, pushing to the default branch?
-5. **Authoritative docs.** Where two existing docs disagree, which wins? Any doc
+5. **Tests.** Show the "where tests go" table from discovery and the rule you
+   will write (`reference/agents-md-structure.md` §9). Ask: for the layers with no
+   harness, add one now, or record them as untested? Should CI fail a PR that
+   changes code without touching a test (`reference/ci-principles.md` §11)? A new
+   test framework or a blocking gate is their decision, not yours.
+6. **Authoritative docs.** Where two existing docs disagree, which wins? Any doc
    that is historical and should be marked superseded?
-6. **Tools.** Which AI tools do they and collaborators use? (Decides which pointer
+7. **Tools.** Which AI tools do they and collaborators use? (Decides which pointer
    files to write — see Step 3.)
-7. **Visibility.** Is or will the repo be public? (Triggers pre-publish.)
-8. **Where new docs go.** Root, or the repo's existing `docs/` folder?
+8. **Visibility.** Is or will the repo be public? (Triggers pre-publish.)
+9. **Where new docs go.** Root, or the repo's existing `docs/` folder?
 
 Do not block on this: draft everything you can from discovery first, then ask, then
 fill the intent-dependent parts.
@@ -119,7 +134,7 @@ for the ledger, `reference/ci-principles.md` for CI. Create files in tiers:
 
 | File | Content |
 |---|---|
-| `AGENTS.md` | What this is (intent, from the human) · Status · Commands (verified) · Key implementation facts · Source-of-truth docs · **Docs are part of the change** with the ownership table · Decisions to preserve (with the human's *why*) · Data-model summary if any · Testing (real coverage, how to run safely) · CI · Git (branch model, message convention, checks, what needs asking first) · Credentials rule · Known issues pointer |
+| `AGENTS.md` | What this is (intent, from the human) · Status · Commands (verified) · Key implementation facts · Source-of-truth docs · **Docs are part of the change** with the ownership table · Decisions to preserve (with the human's *why*) · Data-model summary if any · Testing (real coverage, how to run safely, the tests-are-part-of-the-change rule with where each kind of test goes) · CI · Git (branch model, message convention, checks, what needs asking first) · Credentials rule · Known issues pointer |
 | `CLAUDE.md` | Pointer to AGENTS.md; "if you edit guidance, edit AGENTS.md so they never drift" |
 | `KNOWN_ISSUES.md` | Rules and entry format; entries only for things verification actually found |
 
@@ -152,7 +167,7 @@ AGENTS.md is enough.
 **Also, when discovery found the gap:** a CI workflow shaped per
 `reference/ci-principles.md` (never a template — the stack decides); an env example
 with placeholders and paths that actually work; `.gitignore` additions for uncovered
-secret or database files.
+secret or database files; the test gate in CI, if the human said yes in Step 2.
 
 ### Step 4 — Verify (this is the step that makes it worth doing)
 
@@ -168,7 +183,9 @@ secret or database files.
    item or a human answer? Delete or mark `Unknown` anything that can't.
 5. If the repo has a test suite you now understand, run it against a throwaway
    store per `reference/testing-safety.md`, and write down the incantation in the
-   Testing section so the next person doesn't have to work it out.
+   Testing section so the next person doesn't have to work it out. Check every
+   row of the "where tests go" table: the path exists and the runner picks up a
+   file placed there (a runner's `include` glob can silently exclude it).
 
 ### Step 5 — Report
 
@@ -195,7 +212,9 @@ every claim true — and is anything that matters undocumented".
 1. **Inventory** the docs and the ownership map (or build one if AGENTS.md lacks it).
 2. **Check commands and coverage first** — they're cheap and they're the claims agents
    act on: run every documented command; count what tests actually cover versus what
-   the docs say.
+   the docs say. If AGENTS.md has the tests rule, list the commits since it was
+   adopted that changed behaviour without touching a test
+   (`reference/audit-checklist.md` §14).
 3. **Walk each doc against the code** using `reference/audit-checklist.md`. The claim
    types that drift most, in order: UI labels and button names · form fields and
    their validation · navigation structure · formulas and derived numbers · schema
@@ -215,7 +234,8 @@ every claim true — and is anything that matters undocumented".
    - *Product question* (doc describes something unbuilt; is it wanted?) → ask,
      don't decide.
    - *Bug found by reading* (the doc is right and the code is wrong) → fix in its own
-     commit if small and unambiguous; otherwise a KNOWN_ISSUES entry.
+     commit, with a test that fails without the fix, if small and unambiguous;
+     otherwise a KNOWN_ISSUES entry.
    - *Parked* → KNOWN_ISSUES entry with the workaround named.
 7. **Report** as a table: doc · line · claim · what the code does · triage. An
    undocumented finding has no line — name the code instead.

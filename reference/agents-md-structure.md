@@ -126,11 +126,48 @@ suite against a throwaway store — every env var, every flag. See
 `testing-safety.md`. This is the paragraph that prevents someone wiping their
 local database.
 
+Then the rule that makes tests part of every change, and the table that says where
+each kind of test goes. The rule text, adjusted to the repo's layers:
+
+> **Tests are part of the change.** In the same commit as the code:
+>
+> - A **bug fix** adds a test that fails without the fix. Run it once against the
+>   unfixed code to prove it does.
+> - **New behaviour** — a route, a command, a formula, a validation rule, what a
+>   screen's button does — adds a test that exercises it, at the cheapest layer in
+>   the table below that can see it.
+> - **Changed behaviour** updates the test that pinned the old behaviour; if none
+>   did, it adds one.
+> - A **refactor** adds no tests and changes no assertions. If an assertion has to
+>   change, it wasn't a refactor.
+> - Docs, comments, styling and config with no behaviour need nothing new.
+>
+> If a test can't be written yet — that layer has no harness — say so in the
+> commit message and add a KNOWN_ISSUES.md entry naming the untested behaviour.
+> Never skip a test, loosen an assertion or delete a failing test to make a change
+> pass; a test that is itself wrong is fixed in its own commit, with the reason.
+
+The table is repo-specific, from discovery, and every path in it is checked
+(Step 4). From the example repo:
+
+| Kind of change | Test goes in | Runs with |
+|---|---|---|
+| Money math, dates, recurring rules (`lib/`) | `lib/__tests__/<module>.test.ts` (Vitest) | `npm run test:unit` — milliseconds, no DB |
+| What a screen does | `tests/<screen>.spec.ts` + its page object in `tests/pages/` | the e2e incantation above |
+
+A layer with no harness still gets a row, saying so and what the human decided:
+add one, or leave it untested and listed in KNOWN_ISSUES.md. "Cheapest layer"
+matters: a formula tested through a browser is slow, flaky and gets skipped. The
+example repo's AGENTS.md had this rule for money math only ("a passing build alone
+does not catch an arithmetic mistake"); the rule above is that sentence applied to
+every kind of change.
+
 ## 10. CI
 
 What runs where: which jobs on PRs, which on the default branch, why the split.
 Name the default branch. If a job is expected to be red, say why and link the
-KNOWN_ISSUES entry.
+KNOWN_ISSUES entry. If there is a test gate, name the paths it treats as code and
+as tests, and the exemption trailer (`ci-principles.md` §11).
 
 ## 11. Git
 

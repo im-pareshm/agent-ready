@@ -13,6 +13,9 @@ cheaper to fix than to write up, fix it.
 
 - **Park a fix → add the entry in the same commit.** An exclusion, a `.skip`, an
   `it.todo`, a workaround: whatever carries the debt, the entry lands with it.
+- **Ship a change without its test → add the entry in the same commit.** When a
+  layer has no harness yet, the untested behaviour is named here, so "no test"
+  is a recorded decision and not something the next change silently inherits.
 - **Fix it → delete the entry in the same commit.** Git history is the archive.
   There is no "Resolved" section.
 - **Link both ways.** Every entry names the code carrying its workaround, and that
