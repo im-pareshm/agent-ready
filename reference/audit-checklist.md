@@ -160,6 +160,28 @@ runner's `include` glob no longer covers.
 Triage each as *Parked* (a KNOWN_ISSUES entry naming the untested behaviour) unless
 the test is cheap enough to write now.
 
+## 15. Decision records
+
+Two directions, like the rest of the audit.
+
+*Records → code:* for each *accepted* record, does the code still do what it
+says? Grep for what the decision forbids (the ORM import, a float column, a cron
+config). A record the code contradicts is a **product question**: was it reversed
+without a superseding record, or is the code wrong? Ask; don't decide.
+
+*Code → records:* list dependencies from the manifest and the patterns from
+discovery's "looks deliberate" list. Any that someone could reasonably undo and
+that no record explains is *Undocumented* — but its why comes from the human, so
+it goes in the report's "needs you" list, not straight into a file.
+
+*Also check:* every file has an index row, and status, date and "decided by"
+agree between them; superseded records link their successor; *proposed* records
+older than a few weeks — the human never confirmed them.
+
+*Typical drift:* a dependency swapped with no record; an accepted "no ORM" over
+code that now imports one; a *proposed* record that nobody accepted and every
+agent since has treated as settled.
+
 ## Triage
 
 Every finding lands in exactly one bucket:

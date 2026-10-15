@@ -19,7 +19,7 @@ docs — the skill can only make them true.
 
 ## Status
 
-Initial release in progress: procedure, seven reference docs, three scripts, the
+Initial release in progress: procedure, eight reference docs, three scripts, the
 ATLAS example, and CI are written. Not yet: a second worked example on a non-Node
 stack, and the optional "interface inventory" audit sub-step noted in SKILL.md.
 
@@ -115,7 +115,7 @@ Self-check before finishing, both directions:
 
 ## Decisions to preserve
 
-- **Principles are the product.** `SKILL.md`'s eight principles and the
+- **Principles are the product.** `SKILL.md`'s nine principles and the
   verify-before-report step are what distinguish this from an AGENTS.md template.
   Changes to them go through an issue, not a drive-by PR.
 - **No templates for stack-specific output.** A CI template would be wrong for

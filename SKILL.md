@@ -47,6 +47,13 @@ damage in a real repo (see `examples/atlas/`).
    (principle 4), never a silent skip. AGENTS.md says where each kind of test goes;
    CI checks what a diff can show, if the human wants it. A passing build is not a
    test: it doesn't catch an arithmetic mistake.
+9. **Decisions are part of the change.** A change that makes a choice someone
+   could reasonably undo — a dependency, a pattern over an obvious alternative, a
+   scope cut, a trade-off — records it in the same commit: one file per decision,
+   a row in the index, who decided and when. A choice the agent made is
+   *proposed* until the human accepts it (principle 2). Reversing one supersedes
+   it; accepted records are never deleted. The code shows what was chosen, never
+   why — without the record, the next agent "simplifies" it.
 
 ## Choose a mode
 
@@ -87,6 +94,8 @@ Collect, with evidence, before writing a word:
   Your own commits in this repo must match what you find.
 - **Docs.** Every `*.md`, `docs/`, ADR folder, wiki link. For each: what it covers,
   and one spot-check of a claim against the code so you know how much to trust it.
+  If decision records exist (`adr/`, `docs/decisions/`, DECISIONS.md), note their
+  format and numbering — new records follow them.
 - **Environment and secrets.** Env example files, what env vars the code reads,
   which local secret-bearing files exist (`.env*`, `*.db`, `*.pem`, …) and whether
   `.gitignore` covers them. Run `scripts/scan-secrets.sh`.
@@ -106,7 +115,9 @@ pre-filled where you have one so they can just confirm:
    not built? (These stop an agent "helpfully" building them.)
 3. **Decisions to preserve.** For each pattern you observed that looks deliberate
    (list them: "every amount is an integer", "no ORM", "single-user but `userId`
-   on every table"), ask: is this a decision, and why?
+   on every table"), ask: is this a decision, and why? Who made it, and roughly
+   when? Confirmed ones become decision records; ask where they live (existing
+   convention, else `docs/decisions/`).
 4. **Git.** State what you observed (branch model, message style, hooks) and ask:
    is that deliberate? Is there a convention the log doesn't show yet that agents
    should follow? Which actions must an agent never take here without asking —
@@ -137,7 +148,7 @@ for the ledger, `reference/ci-principles.md` for CI. Create files in tiers:
 
 | File | Content |
 |---|---|
-| `AGENTS.md` | What this is (intent, from the human) · Status · Commands (verified) · Key implementation facts · Source-of-truth docs · **Docs are part of the change** with the ownership table · Decisions to preserve (with the human's *why*) · Data-model summary if any · Testing (real coverage, how to run safely, the tests-are-part-of-the-change rule with where each kind of test goes) · CI · Git (branch model, message convention, checks, what needs asking first) · Credentials rule · Known issues pointer |
+| `AGENTS.md` | What this is (intent, from the human) · Status · Commands (verified) · Key implementation facts · Source-of-truth docs · **Docs are part of the change** with the ownership table · Decisions to preserve (the decisions rule, a link to the index, the few most at risk) · Data-model summary if any · Testing (real coverage, how to run safely, the tests-are-part-of-the-change rule with where each kind of test goes) · CI · Git (branch model, message convention, checks, what needs asking first) · Credentials rule · Known issues pointer |
 | `CLAUDE.md` | Pointer to AGENTS.md; "if you edit guidance, edit AGENTS.md so they never drift" |
 | `KNOWN_ISSUES.md` | Rules and entry format; entries only for things verification actually found |
 
@@ -164,7 +175,7 @@ AGENTS.md is enough.
 
 | File | What you contribute | What the human contributes |
 |---|---|---|
-| `DECISIONS.md` (ADR-lite) | The candidate decisions you observed, each with what the code does | Why, and what it would cost to change |
+| Decision records (`docs/decisions/`: an index + one file per decision, `reference/decision-records.md`) | The candidate decisions you observed, each with what the code does | Which are decisions, why, who made them and when, what it would cost to change. Only confirmed ones become records; after bootstrap, principle 9 adds them as decisions are made |
 | `USER_GUIDE.md` (apps with a UI) | A screen-by-screen draft from the code — labels, buttons, fields, exactly as rendered | The workflow narrative: how the thing is meant to be used |
 
 **Also, when discovery found the gap:** a CI workflow shaped per
@@ -185,7 +196,9 @@ the coverage summary, if they said yes — the coverage command in AGENTS.md
    behaviour? The script cannot tell you this: it finds mentions, and an omission
    has none.
 4. Re-read AGENTS.md as a stranger: can every sentence be traced to an evidence
-   item or a human answer? Delete or mark `Unknown` anything that can't.
+   item or a human answer? Delete or mark `Unknown` anything that can't. If you
+   wrote decision records: every file has an index row, and each row's status,
+   date and "decided by" match its file.
 5. If the repo has a test suite you now understand, run it against a throwaway
    store per `reference/testing-safety.md`, and write down the incantation in the
    Testing section so the next person doesn't have to work it out. Check every
@@ -231,7 +244,10 @@ every claim true — and is anything that matters undocumented".
 4. **Walk the code against the docs** — the direction step 3 can't see. For each
    row of the ownership table, take what the code has (commands, env vars, routes,
    screens, scripts) and ask whether the doc that owns it says so. Significant
-   behaviour nothing documents is a finding.
+   behaviour nothing documents is a finding. The same for decisions: every
+   record still matches the code, and every dependency or pattern that looks
+   chosen has a record (`reference/audit-checklist.md` §15). A record the code
+   contradicts is a product question — reversed without a record, or a bug?
 5. **Run** `scripts/scan-secrets.sh` and the test-safety check from
    `reference/testing-safety.md`.
 6. **Triage** every finding into exactly one of:
@@ -296,6 +312,7 @@ Before a repo becomes public or gets its first remote:
 | `reference/docs-ownership.md` | How to build the ownership table for a given repo |
 | `reference/known-issues.md` | KNOWN_ISSUES.md rules and entry format |
 | `reference/testing-safety.md` | Throwaway stores, per-test isolation, importing app helpers, the run incantation |
+| `reference/decision-records.md` | What counts as a decision, one file per decision + index, status, who decided, superseding |
 | `reference/audit-checklist.md` | Claim types that drift, and how to check each |
 | `reference/ci-principles.md` | The shape a CI workflow must have, whatever the stack |
 | `scripts/scan-secrets.sh` | History + working-tree secrets scan (POSIX sh, git, grep) |

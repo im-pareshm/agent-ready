@@ -6,6 +6,18 @@ minor bump, a change to a reference doc or script pattern is a patch.
 
 ## Unreleased
 
+- Principle 9: decisions are part of the change (minor). A choice someone could
+  reasonably undo — a dependency, a pattern over an obvious alternative, a scope
+  cut, a trade-off, a reversal — is recorded in the same commit: one file per
+  decision (`docs/decisions/NNNN-slug.md`) and a one-line row in an index with
+  status, date and who decided; the file is authoritative. An agent's own choice
+  is *proposed* until the human accepts it; reversing one supersedes it, and
+  accepted records are never deleted. Existing ADR conventions win. New
+  `reference/decision-records.md`; DECISIONS.md (ADR-lite) is replaced by these
+  records in tier 3; AGENTS.md "Decisions to preserve" becomes the rule, the
+  index link and the few decisions most at risk; the ownership table gets a
+  decisions row; audit checks records against code both ways
+  (`reference/audit-checklist.md` §15).
 - Coverage summary, locally and in CI — report only (minor). Discovery records
   whether the runner writes lcov and at what dependency cost; Step 2 offers the
   summary; bootstrap copies `scripts/coverage-summary.sh` into the repo and wires

@@ -169,7 +169,8 @@ Before moving to the human questions, write two short lists:
 - **Observed patterns that look deliberate** — "every amount is an integer",
   "no ORM, raw SQL only", "single tenant but tenant id on every row", "feature
   flags via env only", "every commit goes straight to main". These become the
-  "is this a decision, and why?" question.
+  "is this a decision, and why?" question. If the repo has decision records,
+  check each pattern against them first — a recorded one needs no question.
 - **Things you could not determine** — the runtime version, whether a doc is
   current, what a column is for. These go in AGENTS.md as `Unknown — <how to find
   out>` unless the human answers them.

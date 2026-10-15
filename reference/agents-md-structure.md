@@ -92,21 +92,30 @@ ownership table has to be good enough to read in that direction.
 
 ## 7. Decisions to preserve
 
-The patterns that are deliberate, each with the **why** the human gave. This is the
-section that stops an agent "simplifying" something load-bearing. Format:
+The section that stops an agent "simplifying" something load-bearing. The
+decisions themselves live in decision records — one file per decision, an index
+listing them (`decision-records.md`) — because AGENTS.md can't hold a page of
+context per decision. This section holds three things:
+
+1. **The rule** — decisions are part of the change, agent-made ones are
+   *proposed*, reversal supersedes. The text is in `decision-records.md`.
+2. **A link to the index**, with "check it before changing a dependency, a
+   pattern or the scope".
+3. **The few decisions most likely to be undone by accident**, one line each,
+   linking their files — pointers, not copies; the why lives in the file:
 
 ```
-- **Money is integer paise.** Floats round; SQLite has no Decimal. Forms post
-  rupees, actions convert once, nothing stores a float.
-- **Lazy recurring generation on page load, no cron.** Personal-scale app; "next
-  time I open it" is soon enough, and it needs no infrastructure.
+Index: docs/decisions/README.md. The ones most often undone by accident:
+- Money is integer paise — [0001](docs/decisions/0001-integer-money.md)
+- No cron; recurring entries are generated on page load — [0002](docs/decisions/0002-lazy-recurring.md)
 ```
 
-If a decision has grown a page of context, that page is `DECISIONS.md` and this
-section links to it.
+If the repo keeps decisions some other way (an ADR folder, a DECISIONS.md), link
+that instead and follow its format.
 
 Not here: decisions you inferred without confirmation — those go in the report's
-"needs you" list until confirmed.
+"needs you" list until confirmed. A decision the agent itself made during a
+change is different: it is recorded, as *proposed*.
 
 ## 8. Data model (if there is one)
 

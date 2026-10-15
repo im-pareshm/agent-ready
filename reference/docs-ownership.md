@@ -41,6 +41,7 @@ isn't here.
 | Env vars, config, deploy steps | env example, config loaders, CI env blocks, infra files |
 | Test setup, suites, coverage, where a kind of test goes | test config, fixtures, new/deleted spec files, a new test directory or runner, the CI test gate's paths, coverage config or the coverage step |
 | Feature scope: what's in, what's deferred | — (a product decision) |
+| A decision: a dependency added, removed or swapped; a pattern chosen over an obvious alternative; a scope cut; a trade-off; reversing an earlier one | manifest dependency changes, a new abstraction or layer, a removed feature, a config that picks one approach — and often nothing visible, which is why the row has to exist |
 | A fix you're parking | an exclusion, a `.skip`, a workaround |
 | Default branch, CI triggers | workflow files |
 | How change enters the repo: branch model, commit convention, hooks, releases | hook config, a PR template, CONTRIBUTING.md, tags, a version file |

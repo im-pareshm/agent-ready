@@ -45,7 +45,7 @@ The skill separates what can be **derived from code** (and verified) from what o
 |---|---|---|
 | **Always** | `AGENTS.md` with an Intent section · `CLAUDE.md` and pointers for the tools you use (`.github/copilot-instructions.md`, `GEMINI.md`, …) · `KNOWN_ISSUES.md` | Your answers + verified discovery |
 | **Derived, when there's substance** | Data-model doc with a Mermaid ER diagram · interface inventory (`API.md`) · a verified README quick-start | The code |
-| **Offered, needs you** | `DECISIONS.md` (ADR-lite: the agent lists the patterns it observed, you supply the *why*) · `USER_GUIDE.md` (screen-by-screen draft from the code, you add the workflow) | Code-seeded, human-completed |
+| **Offered, needs you** | Decision records — `docs/decisions/`, one file per decision plus an index with who decided and when (the agent lists the patterns it observed, you supply the *why*) · `USER_GUIDE.md` (screen-by-screen draft from the code, you add the workflow) | Code-seeded, human-completed |
 
 Also, when discovery finds the gap: a CI workflow shaped for your stack, an env
 example whose paths actually work, `.gitignore` additions for uncovered secrets —
@@ -88,6 +88,10 @@ Each one was earned the hard way in the example repo.
    it; new behaviour lands with a test that exercises it. AGENTS.md says where each
    kind of test goes; a layer with no harness yet is parked in `KNOWN_ISSUES.md`,
    never skipped silently.
+9. **Decisions are part of the change.** A choice someone could reasonably undo —
+   a dependency, a pattern, a scope cut, a trade-off — gets its own record in
+   the same commit, listed in an index with who decided and when. An agent's own
+   choice is *proposed* until you accept it; reversing one supersedes it.
 
 ## Install
 
@@ -147,6 +151,7 @@ reference/                  the detail each step points to
   docs-ownership.md         building the ownership table
   known-issues.md           KNOWN_ISSUES.md rules and entry format
   testing-safety.md         throwaway stores, isolation, single-source helpers
+  decision-records.md       one file per decision + index; status, who, superseding
   audit-checklist.md        the claim types that drift, and how to check each
   ci-principles.md          the shape of a sound workflow, whatever the stack
 scripts/
